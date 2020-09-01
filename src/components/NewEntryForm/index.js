@@ -1,18 +1,27 @@
 import React,{useEffect, useState} from 'react'
-import { View, StyleSheet, Text, TextInput, Button, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native'
+
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import NewEntryInput from './NewEntryInput'
+import NewEntryCategoryPicker from './NewEntryCategoryPicker'
 
  const NewEntryForm = ({goToMain, saveEntry, entry, deleteLancamento}) => {
     
     const [valor, setValor] = useState()
-    const [categoria, setCategoria] = useState()
     const [isEdit, setIsEdit] = useState(false)
+    const [categoria, setCategoria] = useState( (entry.category != null) ? entry.category : {id:null,name:''})
     
     useEffect(()=>{
-        setValor(entry.amount.toString())
+        setValor(entry.amount)
         if(entry.id != null){
             setIsEdit(true)
         }
     },[])
+
+    const getCategorySelected = oCategory => {
+        setCategoria(oCategory)
+        
+    }
 
     const preSave = () => {
         const data = 
@@ -20,13 +29,9 @@ import { View, StyleSheet, Text, TextInput, Button, TouchableOpacity } from 'rea
             amount:parseFloat(valor),
             category:categoria
         }
-        if(parseFloat(valor) > 0)
-        {
-            saveEntry(data,entry)
-            goToMain()
-        }else{
-            alert("Valor inválido")
-        }
+        
+        saveEntry(data,entry)
+        goToMain()
     }
 
     const onDelete = () => {
@@ -37,27 +42,25 @@ import { View, StyleSheet, Text, TextInput, Button, TouchableOpacity } from 'rea
     return (
         <View style={styles.container}>
 
-            <TextInput style={styles.input} 
-            placeholder="Valor"
-            placeholderTextColor="#fff"
-            keyboardType="numeric"
-            onChangeText={text => setValor(text)}
-            value={valor}
-            />
-
-            <TextInput style={styles.input} 
-            placeholder="Categoria"
-            placeholderTextColor="#fff"
-            onChangeText={text => setCategoria(text)}
-            value={categoria}
-            />
+            <NewEntryInput value={valor} onChangeValue={setValor}/>
+            <NewEntryCategoryPicker oCategoria={categoria} getCategorySelected={getCategorySelected}/>
             <View style={styles.containerButton}>
-                <TouchableOpacity style={styles.btnSalvar} onPress={preSave}>
-                    <Text style={styles.btnSalvarText}>Salvar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.btnCancelar} onPress={goToMain}>
-                <Text style={styles.btnCancelarText}>Cancelar</Text>
-                </TouchableOpacity>
+                <View style={styles.actionButton}>
+                    <TouchableOpacity style={styles.btnSalvar} onPress={preSave}>
+                        <Text style={styles.btnSalvarText}>Salvar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btnCancelar} onPress={goToMain}>
+                        <Text style={styles.btnCancelarText}>Cancelar</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.interationButton}>
+                    <TouchableOpacity style={styles.btnCamera}>
+                        <Icon name="photo-camera" size={40} color={"#fff"} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btnLocalizacao}>
+                        <Icon name="place" size={40} color={"#fff"} />
+                    </TouchableOpacity>
+                </View>
             </View>
             {(isEdit) &&(
                 <View style={styles.containerButton}>
@@ -89,31 +92,56 @@ const styles = StyleSheet.create({
         textAlign:"center",
     },
     containerButton:{
-        marginVertical:15,
-        flexDirection:"row",
         alignItems:"center",
     },
+    actionButton:{
+        flexDirection:"row",
+    },
+    interationButton:{
+        flexDirection:"row",
+        marginVertical:20
+    },
+    btnCamera:{
+        marginHorizontal:35,
+        borderStyle:"solid",
+        borderColor:"#34495e",
+        borderWidth:1,
+        borderRadius:100,
+        backgroundColor:"#34495e",
+        padding:10
+    },
+    btnLocalizacao:{
+        marginHorizontal:35,
+        borderStyle:"solid",
+        borderColor:"#34495e",
+        borderWidth:1,
+        borderRadius:100,
+        backgroundColor:"#34495e",
+        padding:10
+    },
     btnSalvar:{
-        marginHorizontal:30,
+        marginHorizontal:15,
         borderWidth:1,
         borderRadius:20,
         borderColor:"#2ecc71",
-        
     },
     btnSalvarText:{
         fontSize:16,
-        color:"#95a5a6",
         paddingHorizontal:25,
         paddingVertical:15,
         color:"#2ecc71"
     },
     btnCancelar:{
-        marginHorizontal:30,
+        marginHorizontal:15,
+        borderWidth:1,
+        borderRadius:20,
+        borderColor:"#fff",
     },
     btnCancelarText:{
         fontSize:16,
-        color:"#ecf0f1",
-        padding:5
+        paddingHorizontal:25,
+        paddingVertical:15,
+        color:"#fff"
     },
     btnExcluir:{
         marginHorizontal:30,

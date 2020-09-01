@@ -6,10 +6,11 @@ export const saveEntry = async (obj, entry = {}) => {
     const idEntry = getUUID();
     const realm = await getRealm();
     let dataEntry = {};
-    
+    console.log("entry ::: ",JSON.stringify(entry))
+    console.log("obj ::: ",JSON.stringify(obj))
     try {
         realm.write(() => {
-
+            
             dataEntry = {
                 id:entry.id || obj.id || idEntry,
                 amount:obj.amount || entry.amount,
@@ -20,9 +21,12 @@ export const saveEntry = async (obj, entry = {}) => {
                 longitude:entry.longitude || obj.longitude || null,
                 address:entry.address || obj.address || '',
                 photo:entry.photo || obj.photo || '',
+                category:obj.category || entry.category
             };
-            
+            console.log(`Entries ::: ${JSON.stringify(dataEntry)}`)
+
             realm.create('Entry', dataEntry, true)
+            
             alert("Sucesso")
         });
     
@@ -38,10 +42,11 @@ export const saveEntry = async (obj, entry = {}) => {
 export const getAllLancamentos = async () => {
     const realm = await getRealm();
     try {
-        const entries = realm.objects('Entry')
+        const entries = realm.objects('Entry').sorted('entryAt',true)
+
         return entries;
     } catch (error) {
-        console.error("saveEntry:: error on get object ")
+        console.error("getAllLancamentos:: error on get object ")
         alert("Erro ao obter os dados de lançamento")
     }
 }
@@ -66,5 +71,5 @@ export const totalBalance = async () => {
     data.forEach(lancamento => {
       total += lancamento.amount;
     });
-    return total;
+    return total.toFixed(2);
   }

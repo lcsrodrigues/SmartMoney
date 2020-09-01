@@ -6,7 +6,7 @@ import EntrySumary from '../../components/EntrySumary'
 import EntryList from '../../components/EntryList'
 
 const Main = ({navigation}) => {
-
+    
     const goToNewEntry = () => { navigation.navigate("NewEntry")}
     const goToReport = () => { navigation.navigate("Report")}
 
@@ -14,7 +14,7 @@ const Main = ({navigation}) => {
         <View style={styles.container}>
             <BalancePanel goToNewEntry={goToNewEntry} goToReport={goToReport}/>
             <EntrySumary />
-            <EntryList />
+            <EntryList navigation={navigation}/>
         </View>
     )
 }
